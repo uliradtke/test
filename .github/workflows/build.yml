@@ -3,16 +3,32 @@ on: [push, workflow_dispatch]
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
 
-      # Dieser fertige Roboter übernimmt den kompletten Build-Prozess fehlerfrei
-      - name: Buildozer Action
-        uses: ArtemGovorov/buildozer-action@v1
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          buildozer_version: stable
-          command: buildozer -v android debug
+          python-version: '3.10'
+
+      # Hier reparieren wir den "exit code 100" Fehler der Paketverwaltung
+      - name: Install System Dependencies
+        run: |
+          sudo rm -rf /var/lib/apt/lists/*
+          sudo apt-get clean
+          sudo apt-get update --fix-missing
+          sudo apt-get install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libssl-dev cmake libgstreamer1.0-dev gstreamer1.0-plugins-base gstreamer1.0-plugins-good
+
+      - name: Install Python Dependencies
+        run: |
+          pip install --upgrade pip
+          pip install Cython==0.29.36 buildozer virtualenv
+
+      # Dieser Roboter fängt Lizenzabfragen automatisch mit "Ja" ab
+      - name: Build with Buildozer
+        run: |
+          yes | buildozer -v android debug
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
