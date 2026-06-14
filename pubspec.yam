@@ -1,0 +1,19 @@
+name: barcode_scanner_app
+description: Ein schneller Live-Barcode-Scanner für die Inventur.
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  # Das offizielle, pfeilschnelle Paket für Live-Kamera-Scans
+  mobile_scanner: ^5.1.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
